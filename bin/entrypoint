@@ -1,58 +1,37 @@
 #!/bin/bash
 
 IMAGE_NAME=${IMAGE_NAME:-rpi.img}
+echo $CMD
+CMD=$1
+echo $CMD
+exit
 
 set -uo pipefail
 trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
 IFS=$'\n\t'
 
 cleanup() {
-  if [[ -d "mnt/dev" ]]; then
-      umount "mnt/dev" || true
-  fi
-
-  if [[ -d "mnt/proc" ]]; then
-      umount "mnt/proc" || true
-  fi
-
-  if [[ -d "mnt/sys" ]]; then
-      umount "mnt/sys" || true
-  fi
-
-  if [[ -d "mnt/boot" ]]; then
-      umount "mnt/boot" || true
-  fi
-
-  if [[ -d "mnt" ]]; then
-      umount "mnt" || true
-      rmdir "mnt" || true
-  fi
+  test -d mnt/dev && umount mnt/dev
+  test -d mnt/proc && umount mnt/proc
+  test -d mnt/sys && umount mnt/sys
+  test -d mnt/boot && umount mnt/boot
+  test -d mnt && { umount mnt; rmdir mnt }
   loopdev=$(losetup --find --show "${IMAGE_NAME}")
-  [ -n "${loopdev}" ] && losetup --detach "${loopdev}" || true
+  [ -n "${loopdev}" ] && losetup --detach "${loopdev}"
 }
 
 trap cleanup EXIT
 
-if [[ -f "/tmp/build/${IMAGE_NAME}" ]]; then
-  echo "removing old image..."
-  rm /tmp/build/${IMAGE_NAME}
-fi
-
 disk-init
 load-os
-copy-to-pi
 
 # run custom setup script inside context of image
-if [[ -n "${SETUP_SCRIPT}" ]]; then
-  if [[ -f "${SETUP_SCRIPT}" ]]; then
-    echo "running setup script..."
-    chroot mnt "${SETUP_SCRIPT}"
-  fi
-fi
+echo "running '$CMD'..."
+chroot mnt $CMD
 
 # now export the finalized image for flashing
-[ ! -d "/tmp/build" ] && mkdir "/tmp/build"
-cp "${IMAGE_NAME}" "/tmp/build/${IMAGE_NAME}"
+mkdir -p /tmp/build
+cp "${IMAGE_NAME}" /tmp/build/
 
 echo "---------------------------------------------"
 echo " ${IMAGE_NAME} is now ready for flashing"

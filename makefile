@@ -15,11 +15,8 @@ run:
 		--volume ${PWD}/share:/tmp \
 		-e OS_IMAGE="$(OS_IMAGE)" \
 		-e OS_URI="$(OS_URI)" \
-		-e SCRIPT_DIR="/tmp/my-scripts" \
-		-e COPY_DIR="/tmp/copy-this" \
-		-e SETUP_SCRIPT="/tmp/setup" \
-		-e IMAGE_SIZE=$(IMAGE_SIZE) \
-		"pi-maker:${TAG}"
+		-e IMAGE_SIZE="$(IMAGE_SIZE)" \
+		"pi-maker:${TAG}" /tmp/setup
 
 flash: build run
 	etcher ./share/build/rpi.img

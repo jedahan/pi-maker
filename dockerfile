@@ -19,4 +19,4 @@ zip
 
 COPY bin/* /usr/local/bin/
 
-ENTRYPOINT "/usr/local/bin/entrypoint"
+ENTRYPOINT /usr/local/bin/entrypoint

@@ -3,6 +3,11 @@
 IMAGE_NAME=${IMAGE_NAME:-rpi.img}
 IMAGE_SIZE=${IMAGE_SIZE:-2G}
 
+if [[ -f "/tmp/build/${IMAGE_NAME}" ]]; then
+  echo "removing old image..."
+  rm /tmp/build/${IMAGE_NAME}
+fi
+
 echo -e "creating ${IMAGE_SIZE} disk named ${IMAGE_NAME}..."
 
 echo "#############################################"
@@ -34,8 +39,8 @@ mkfs.ext4 -F ${rootdev}
 echo "#############################################"
 echo "## Mount File System "
 echo "#############################################"
-[ ! -d "mnt" ] && mkdir "mnt"
-mount "${rootdev}" "mnt"
-[ ! -d "mnt/boot" ] && mkdir "mnt/boot"
-mount "${bootdev}" "mnt/boot"
+mkdir -p mnt
+mount "${rootdev}" mnt
+mkdir -p mnt/boot
+mount "${bootdev}" mnt/boot
 ls -al mnt
