@@ -20,9 +20,6 @@ load-os
 
 # run custom setup script inside context of image
 cp -rf /share/ mnt/
-ls -al /mnt
-bash
-chroot mnt bash
 cmd=$1
 echo "running '$cmd'..."
 chroot mnt $cmd
