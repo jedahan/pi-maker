@@ -2,13 +2,14 @@ MAKEFLAGS += --warn-undefined-variables
 SHELL := /bin/bash
 
 TAG?=latest
+BUILDER?=lantern/pi-maker:$(TAG)
 OS_IMAGE?=ArchLinuxARM-rpi-latest.tar.gz
 OS_URI?=http://os.archlinuxarm.org/os/$(OS_IMAGE)
 IMAGE_SIZE?=3G
 
-build:
+pimaker:
 	docker run --rm --privileged multiarch/qemu-user-static:register --reset
-	docker build -t "lantern/pi-maker:${TAG}" .
+	docker build -t "${BUILDER}" .
 
 run:
 	docker run -it --privileged \
@@ -17,7 +18,7 @@ run:
 		-e IMAGE_SIZE="$(IMAGE_SIZE)" \
 		-v ${PWD}/share:/share \
 		-v ${PWD}/build:/build \
-		lantern/pi-maker:${TAG} /setup
+		${BUILDER} /setup
 
 flash: build run
 	etcher build/rpi.img

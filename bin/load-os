@@ -7,15 +7,19 @@ IMAGE_PATH=/build/"${OS_IMAGE}"
 echo "#############################################"
 echo "## Installing Operating System"
 echo "#############################################"
-echo "downloading or using cache..."
-test -f "${IMAGE_PATH}" || wget -P /build/ "${OS_URI}" -q --show-progress
+
+echo "image path is ${IMAGE_PATH}"
+if [[ ! -f "${IMAGE_PATH}" ]]; then
+  echo "downloading..."
+  wget -P /build/ "${OS_URI}" -q --show-progress
+fi
 
 echo "unpacking..."
-file "${IMAGE_PATH}" | grep -E '((XZ|gzip) compressed data|POSIX tar archive)'
+file "${IMAGE_PATH}" | grep -qE '((XZ|gzip) compressed data|POSIX tar archive)'
 test $? -eq 0 && pv -pe "/build/${OS_IMAGE}" | tar xzpf - -C mnt
 
-file "${IMAGE_PATH}" | grep 'Zip archive data'
-test $? -eq 0 && unzip "${IMAGE_PATH}" -d mnt
+file "${IMAGE_PATH}" | grep -q 'Zip archive data'
+test $? -eq 0 && unzip -o "${IMAGE_PATH}" -d mnt | pv -l >/dev/null
 
 echo "#############################################"
 echo "## Tuning Operating System"
