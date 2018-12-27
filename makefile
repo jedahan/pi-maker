@@ -16,7 +16,7 @@ run:
 		-e OS_IMAGE="$(OS_IMAGE)" \
 		-e OS_URI="$(OS_URI)" \
 		-e IMAGE_SIZE="$(IMAGE_SIZE)" \
-		"pi-maker:${TAG}" /tmp/setup
+		pi-maker:${TAG} /tmp/setup
 
 flash: build run
 	etcher ./share/build/rpi.img

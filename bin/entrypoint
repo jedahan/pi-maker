@@ -25,6 +25,7 @@ disk-init
 load-os
 
 # run custom setup script inside context of image
+cp -r /tmp/* /mnt/tmp/
 echo "running '$1'..."
 chroot mnt $1
 

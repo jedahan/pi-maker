@@ -32,15 +32,17 @@ A local [Docker](https://www.docker.com/community-edition) environment is requir
 
 ### Customization
 
-The docker entrypoint mainly does two things:
+The docker entrypoint runs whatever CMD you pass it to as root from within the emulated pi container.
 
-  1. copies all files from `share/copy-this` to the root filesystem
-  2. runs `share/setup` (as root)
-    * ...which runs `share/my-scripts/test-script` by default
+For example, from the makefile run entry:
 
-The easiest way to customize the image build process, is to put scripts in `share/my-scripts`,
-and edit `share/setup` to run whatever scripts you want. Remember the scripts will run as root
-so if you want to do something as the pi user, prefix it with `sudo -u pi dothething`.
+    docker run -it --privileged \
+      --volume ${PWD}/share:/tmp \ # mount the share folder into /tmp
+      pi-maker:latest /tmp/setup   # run the /tmp/setup script
+
+The easiest way to customize the image build process, is to put whatever files you want in `share/overlay` and edit `share/setup` to run whatever scripts you want.
+
+Remember the scripts will run as root so if you want to do something as the pi user, prefix it with `sudo -u pi dothething`.
 
 #### Customizing the base OS
 
@@ -65,6 +67,3 @@ make run
 - [Raspberry Pi: How to Install and Configure Archlinux ARM](http://populationinversion.com/posts/raspberrypi-install-and-configure-archlinux-arm/)
 - [Create Custom ArchlinuxArm Images for the Raspberry Pi](https://disconnected.systems/blog/raspberry-pi-archlinuxarm-setup)
 - [Building ARM containers on any x86 machine, even DockerHub](https://resin.io/blog/building-arm-containers-on-any-x86-machine-even-dockerhub/)
-
-### Disclaimer
-This repository is under active development and not yet intended for widespread use.

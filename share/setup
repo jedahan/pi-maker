@@ -4,7 +4,7 @@
 echo "customizing device..."
 
 # install some software copied from shared volume...
-cp -rv overlay/* /
+cp -rv overlay/* /mnt/
 
 # run the test script
 test-script
