@@ -21,6 +21,5 @@ VOLUME /share
 VOLUME /build
 
 COPY bin/* /usr/local/bin/
-ENTRYPOINT /usr/local/bin/entrypoint
 
-CMD ""
+ENTRYPOINT [ "/usr/local/bin/entrypoint" ]
