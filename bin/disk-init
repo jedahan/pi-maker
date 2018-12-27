@@ -33,8 +33,8 @@ fi
 
 bootdev=$(ls "${loopdev}"*1)
 rootdev=$(ls "${loopdev}"*2)
-mkfs.vfat -F32 ${bootdev}
-mkfs.ext4 -F ${rootdev}
+mkfs.vfat -q -F32 ${bootdev}
+mkfs.ext4 -q -F ${rootdev}
 
 echo "#############################################"
 echo "## Mount File System "
