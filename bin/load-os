@@ -2,25 +2,27 @@
 
 OS_IMAGE=${OS_IMAGE:-ArchLinuxARM-rpi-latest.tar.gz}
 OS_URI=${OS_URI:-http://archlinuxarm.org/os/${OS_IMAGE}}
+IMAGE_PATH=/build/"${OS_IMAGE}"
 
 echo "#############################################"
 echo "## Installing Operating System"
 echo "#############################################"
 echo "downloading or using cache..."
-[ ! -f "/tmp/build/${OS_IMAGE}" ] && wget -P "/tmp/build/" "${OS_URI}"
+test -f "${IMAGE_PATH}" || wget -P /build/ "${OS_URI}" -q --show-progress
 
 echo "unpacking..."
-file "/tmp/build/${OS_IMAGE}" | grep -E '((XZ|gzip) compressed data|POSIX tar archive)'
-test $? -eq 0 && pv -pe "/tmp/build/${OS_IMAGE}" | tar xzpf - -C mnt
-file "/tmp/build/${OS_IMAGE}" | grep 'Zip archive data'
-test $? -eq 0 && unzip "/tmp/build/${OS_IMAGE}" -d mnt
+file "${IMAGE_PATH}" | grep -E '((XZ|gzip) compressed data|POSIX tar archive)'
+test $? -eq 0 && pv -pe "/build/${OS_IMAGE}" | tar xzpf - -C mnt
+
+file "${IMAGE_PATH}" | grep 'Zip archive data'
+test $? -eq 0 && unzip "${IMAGE_PATH}" -d mnt
 
 echo "#############################################"
 echo "## Tuning Operating System"
 echo "#############################################"
 mount -t proc none mnt/proc
 mount -t sysfs none mnt/sys
-mount -o bind /dev mnt/dev
+mount -o rbind /dev mnt/dev
 rm mnt/etc/resolv.conf
 cp /etc/resolv.conf mnt/etc/resolv.conf
 cp /usr/bin/qemu-arm-static mnt/usr/bin/

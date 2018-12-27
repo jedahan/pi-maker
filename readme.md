@@ -7,7 +7,7 @@
 make && make run
 ```
 
-A new disk image for Raspberry Pi will appear inside this project folder within "share/build". This solution has been tested with Raspberry Pi Zero W and may work for other models, too.
+A new disk image for Raspberry Pi will appear inside the **build** folder. This solution has been tested with Raspberry Pi Zero W and may work for other models, too.
 
 ### Next: Flash With Desktop App
 
@@ -23,7 +23,7 @@ Run the commands below and the terminal will prompt you to select the desired dr
 
 ```bash
 make && make run
-sudo etcher ./share/build/rpi.img
+make flash
 ```
 
 ### Requirements
@@ -37,10 +37,11 @@ The docker entrypoint runs whatever CMD you pass it to as root from within the e
 For example, from the makefile run entry:
 
     docker run -it --privileged \
-      --volume ${PWD}/share:/tmp \ # mount the share folder into /tmp
-      pi-maker:latest /tmp/setup   # run the /tmp/setup script
+      --volume ${PWD}/share:/share \ # mount the share folder
+      --volume ${PWD}/build:/build \ # mount the build folder
+      pi-maker:latest /setup # run the /setup script that was in /share
 
-The easiest way to customize the image build process, is to put whatever files you want in `share/overlay` and edit `share/setup` to run whatever scripts you want.
+The easiest way to customize the image build process, is to put whatever files you want in `share/` and edit `share/setup` to run whatever scripts you want.
 
 Remember the scripts will run as root so if you want to do something as the pi user, prefix it with `sudo -u pi dothething`.
 
@@ -50,7 +51,7 @@ By exporting `OS_IMAGE`, and/or `OS_URI` you can use a different operating syste
 
 ```bash
 # Creating a raspbian image requires merging the boot partition into the root tar
-pushd share/build
+pushd build
 export LATEST_BUILD='2018-11-15-21:03'
 wget http://vx2-downloads.raspberrypi.org/raspbian_lite/archive/${LATEST_BUILD}/boot.tar.xz
 wget http://vx2-downloads.raspberrypi.org/raspbian_lite/archive/${LATEST_BUILD}/root.tar.xz

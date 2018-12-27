@@ -17,7 +17,10 @@ util-linux \
 wget \
 zip
 
-COPY bin/* /usr/local/bin/
+VOLUME /share
+VOLUME /build
 
-ENTRYPOINT ["/usr/local/bin/entrypoint"]
-CMD [""]
+COPY bin/* /usr/local/bin/
+ENTRYPOINT /usr/local/bin/entrypoint
+
+CMD ""

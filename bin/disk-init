@@ -3,9 +3,9 @@
 IMAGE_NAME=${IMAGE_NAME:-rpi.img}
 IMAGE_SIZE=${IMAGE_SIZE:-2G}
 
-if [[ -f "/tmp/build/${IMAGE_NAME}" ]]; then
+if [[ -f "/build/${IMAGE_NAME}" ]]; then
   echo "removing old image..."
-  rm /tmp/build/${IMAGE_NAME}
+  rm /build/${IMAGE_NAME}
 fi
 
 echo -e "creating ${IMAGE_SIZE} disk named ${IMAGE_NAME}..."

@@ -3,6 +3,8 @@
 # modify this to meet your needs on the Raspberry Pi device
 echo "configuring raspberry pi..."
 
+ls /
+
 # enable the usb serial, this will make it easier to add any wifi credentials on the pi zero (will not work on other models).
 grep 'dtoverlay=dwc2' /boot/config.txt >/dev/null || echo 'dtoverlay=dwc2' >> /boot/config.txt
 grep 'modules-load=dwc2,g_serial' /boot/cmdline.txt >/dev/null || sed -i 's/.*rootwait.*/& modules-load=dwc2,g_serial/' /boot/cmdline.txt

@@ -3,8 +3,5 @@
 # modify this to meet your needs on the Raspberry Pi device
 echo "customizing device..."
 
-# install some software copied from shared volume...
-cp -rv overlay/* /mnt/
-
 # run the test script
 test-script

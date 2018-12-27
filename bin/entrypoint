@@ -16,7 +16,7 @@ cleanup() {
     rmdir mnt
   fi
   loopdev=$(losetup --find --show "${IMAGE_NAME}")
-  [ -n "${loopdev}" ] && losetup --detach "${loopdev}"
+  test -n "${loopdev}" && losetup --detach "${loopdev}"
 }
 
 trap cleanup EXIT
@@ -25,13 +25,17 @@ disk-init
 load-os
 
 # run custom setup script inside context of image
-cp -r /tmp/* /mnt/tmp/
-echo "running '$1'..."
-chroot mnt $1
+cp -rf /share/ mnt/
+ls -al /mnt
+bash
+chroot mnt bash
+cmd=$1
+echo "running '$cmd'..."
+chroot mnt $cmd
 
 # now export the finalized image for flashing
-mkdir -p /tmp/build
-cp "${IMAGE_NAME}" /tmp/build/
+mkdir -p /build
+cp "${IMAGE_NAME}" /build/
 
 echo "---------------------------------------------"
 echo " ${IMAGE_NAME} is now ready for flashing"
