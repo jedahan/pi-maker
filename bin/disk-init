@@ -43,4 +43,4 @@ mkdir -p mnt
 mount "${rootdev}" mnt
 mkdir -p mnt/boot
 mount "${bootdev}" mnt/boot
-ls -al mnt
+mount
