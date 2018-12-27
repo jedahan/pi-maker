@@ -1,10 +1,6 @@
 #!/bin/bash
 
 IMAGE_NAME=${IMAGE_NAME:-rpi.img}
-echo $CMD
-CMD=$1
-echo $CMD
-exit
 
 set -uo pipefail
 trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
@@ -15,7 +11,10 @@ cleanup() {
   test -d mnt/proc && umount mnt/proc
   test -d mnt/sys && umount mnt/sys
   test -d mnt/boot && umount mnt/boot
-  test -d mnt && { umount mnt; rmdir mnt }
+  if [[ -d mnt ]]; then
+    umount mnt || true
+    rmdir mnt
+  fi
   loopdev=$(losetup --find --show "${IMAGE_NAME}")
   [ -n "${loopdev}" ] && losetup --detach "${loopdev}"
 }
@@ -26,8 +25,8 @@ disk-init
 load-os
 
 # run custom setup script inside context of image
-echo "running '$CMD'..."
-chroot mnt $CMD
+echo "running '$1'..."
+chroot mnt $1
 
 # now export the finalized image for flashing
 mkdir -p /tmp/build
