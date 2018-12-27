@@ -33,7 +33,7 @@ fi
 
 bootdev=$(ls "${loopdev}"*1)
 rootdev=$(ls "${loopdev}"*2)
-mkfs.vfat -q -F32 ${bootdev}
+mkfs.vfat -F32 ${bootdev}
 mkfs.ext4 -q -F ${rootdev}
 
 echo "#############################################"
@@ -43,4 +43,4 @@ mkdir -p mnt
 mount "${rootdev}" mnt
 mkdir -p mnt/boot
 mount "${bootdev}" mnt/boot
-mount
+mount | grep loop

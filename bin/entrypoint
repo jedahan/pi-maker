@@ -19,7 +19,7 @@ disk-init
 load-os
 
 # run custom setup script inside context of image
-cp -rf /share/ mnt/
+cp -rv /share/* mnt/
 cmd=$1
 echo "running '$cmd'..."
 chroot mnt $cmd
