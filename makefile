@@ -6,6 +6,7 @@ BUILDER?=lantern/pi-maker:$(TAG)
 OS_IMAGE?=ArchLinuxARM-rpi-latest.tar.gz
 OS_URI?=http://os.archlinuxarm.org/os/$(OS_IMAGE)
 IMAGE_SIZE?=3G
+CMD?=/setup
 
 pimaker:
 	docker run --rm --privileged multiarch/qemu-user-static:register --reset
@@ -18,7 +19,7 @@ run:
 		-e IMAGE_SIZE="$(IMAGE_SIZE)" \
 		-v ${PWD}/share:/share \
 		-v ${PWD}/build:/build \
-		${BUILDER} /setup
+		${BUILDER} $(CMD)
 
 flash: build run
 	etcher build/rpi.img
