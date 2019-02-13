@@ -1,51 +1,64 @@
 
 # pi-maker
 
-### Getting Started
+A docker container and simple scripts that makes it easy to build custom images for the raspberry pi from your computer, ready-to-bake onto an sd card.
 
-```bash
-make && make run
-```
+## getting started
 
-A new disk image for Raspberry Pi will appear inside the **build** folder. This solution has been tested with Raspberry Pi Zero W and may work for other models, too.
+Create the docker container
 
-### Next: Flash With Desktop App
+    make pi-maker
 
-[Download Etcher](http://etcher.io)
+Create a simple raspbian image
 
-Open the desktop application and follow the prompts to select the disk image and the desired SD Card to use.
+    make -f makefile.raspbian
 
-### Or: Flash With Command Line
+Create an arch linux image
 
-[Install Etcher CLI](https://etcher.io/cli/)
+    make -f makefile.arch
 
-Run the commands below and the terminal will prompt you to select the desired drive to install to. Please be careful to select the proper SD Card and not another disk to avoid unwanted data loss.
+## customization
 
-```bash
-make && make run
-make flash
-```
-
-### Requirements
-
-A local [Docker](https://www.docker.com/community-edition) environment is required in order to build an image.
-
-### Customization
-
-The docker entrypoint runs whatever CMD you pass it to as root from within the emulated pi container.
-
-For example, from the makefile `build` entry:
-
-    docker run -it --privileged \
-      --volume ${PWD}/share:/share \ # mount the share folder
-      --volume ${PWD}/build:/build \ # mount the build folder
-      pi-maker:latest /setup # run the /setup script that was in /share
 
 The easiest way to customize the image build process, is to put whatever files you want in `share/` and edit `share/setup` to run whatever scripts you want.
 
 Remember the scripts will run as root so if you want to do something as the pi user, prefix it with `sudo -u pi dothething`.
 
-#### Customizing the base OS
+## customizing the base operating system
+
+To build an image, pi-maker needs to know a few things:
+
+The path to your starting OS image:
+
+    --env OS_IMAGE=archlinux.tar.xz
+
+A directory to copy over to the pi after the OS is loaded (mount to /share)
+
+    --volume ${PWD}/share:/share
+
+The script you'd like to run after copying over everything from /share
+
+    --env SETUP_SCRIPT=/setup
+
+The directory to copy the finished image to
+
+    --volume ${PWD}/build:/build
+
+The size you'd like your image to be
+
+    --env IMG_SIZE=4G
+
+Putting it all together, you might have
+
+For example, from the makefile `build` entry:
+
+    docker run -it --privileged \
+      --volume ${PWD}/share:/share \
+      --env OS_IMAGE=combined.tar \
+      --env SETUP_SCRIPT=/setup \
+      --volume ${PWD}/build:/build \
+      --env IMAGE_SIZE=4G \
+      pi-maker:latest
 
 By exporting `OS_IMAGE`, and/or `OS_URI` you can use a different operating system, like so:
 

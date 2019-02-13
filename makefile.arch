@@ -1,0 +1,17 @@
+MAKEFLAGS += --warn-undefined-variables
+SHELL := /bin/bash
+
+TAG?=latest
+BUILDER?=lantern/pi-maker:$(TAG)
+OS_IMAGE?=ArchLinuxARM-rpi-latest.tar.gz
+OS_URI?=http://archlinuxarm.org/os/$(OS_IMAGE)
+
+arch:
+	docker run -it --privileged \
+		-e OS_IMAGE="$(OS_IMAGE)" \
+		-e OS_URI="$(OS_URI)" \
+		-e IMAGE_SIZE="3G" \
+		-e SETUP_SCRIPT=/setup \
+		-v ${PWD}/share:/share \
+		-v ${PWD}/build:/build \
+		$(BUILDER)

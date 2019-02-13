@@ -3,6 +3,12 @@
 IMAGE_NAME=${IMAGE_NAME:-rpi.img}
 IMAGE_SIZE=${IMAGE_SIZE:-2G}
 
+trap cleanup EXIT
+
+cleanup() {
+  echo "cleaning up disk init..."
+}
+
 if [[ -f "/build/${IMAGE_NAME}" ]]; then
   echo "removing old image..."
   rm /build/${IMAGE_NAME}

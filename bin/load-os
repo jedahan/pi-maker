@@ -2,13 +2,13 @@
 
 OS_IMAGE=${OS_IMAGE:-ArchLinuxARM-rpi-latest.tar.gz}
 OS_URI=${OS_URI:-http://archlinuxarm.org/os/${OS_IMAGE}}
-IMAGE_PATH=/tmp/build/"${OS_IMAGE}"
+IMAGE_PATH=/build/"${OS_IMAGE}"
 
 echo "#############################################"
 echo "## Installing Operating System"
 echo "#############################################"
 
-[ ! -f "${IMAGE_PATH}" ] && { echo "downloading image..." && wget -P "/tmp/build/" "${OS_URI}" -q --show-progress }
+[ ! -f "${IMAGE_PATH}" ] && { echo "downloading image..." && wget -P "/build/" "${OS_URI}" -q --show-progress }
 
 echo "unpacking image..."
 file "${IMAGE_PATH}" | grep -qE '((XZ|gzip) compressed data|POSIX tar archive)'
