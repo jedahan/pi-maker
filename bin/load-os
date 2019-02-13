@@ -15,7 +15,7 @@ fi
 
 echo "unpacking image..."
 file "${IMAGE_PATH}" | grep -qE '((XZ|gzip) compressed data|POSIX tar archive)'
-test $? -eq 0 && pv -pe "${IMAGE_PATH}" | tar xzpf - -C mnt
+test $? -eq 0 && pv -pe "${IMAGE_PATH}" | tar xf - -C mnt
 file "${IMAGE_PATH}" | grep -q 'Zip archive data'
 test $? -eq 0 && unzip "${IMAGE_PATH}" -d mnt | pv -l >/dev/null
 
