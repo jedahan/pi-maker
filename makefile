@@ -4,13 +4,12 @@ SHELL := /bin/bash
 TAG?=latest
 BUILDER?=lantern/pi-maker:$(TAG)
 OS_IMAGE?=ArchLinuxARM-rpi-latest.tar.gz
-OS_URI?=http://os.archlinuxarm.org/os/$(OS_IMAGE)
+OS_URI?=http://archlinuxarm.org/os/$(OS_IMAGE)
 IMAGE_SIZE?=3G
-CMD?=/setup
 
-pimaker:
+build:
 	docker run --rm --privileged multiarch/qemu-user-static:register --reset
-	docker build -t "${BUILDER}" .
+	docker build -t "pi-maker:${TAG}" .
 
 run:
 	docker run -it --privileged \

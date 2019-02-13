@@ -7,26 +7,52 @@ trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
 IFS=$'\n\t'
 
 cleanup() {
-  umount -R mnt
-  test -d mnt && rmdir mnt
+  if [[ -d "mnt/dev" ]]; then
+      umount "mnt/dev" || true
+  fi
+
+  if [[ -d "mnt/proc" ]]; then
+      umount "mnt/proc" || true
+  fi
+
+  if [[ -d "mnt/sys" ]]; then
+      umount "mnt/sys" || true
+  fi
+
+  if [[ -d "mnt/boot" ]]; then
+      umount "mnt/boot" || true
+  fi
+
+  if [[ -d "mnt" ]]; then
+      umount "mnt" || true
+      rmdir "mnt" || true
+  fi
   loopdev=$(losetup --find --show "${IMAGE_NAME}")
-  test -n "${loopdev}" && losetup --detach "${loopdev}"
+  [ -n "${loopdev}" ] && losetup --detach "${loopdev}" || true
 }
 
 trap cleanup EXIT
 
+if [[ -f "/tmp/build/${IMAGE_NAME}" ]]; then
+  echo "removing old image..."
+  rm /tmp/build/${IMAGE_NAME}
+fi
+
 disk-init
 load-os
+copy-to-pi
 
 # run custom setup script inside context of image
-cp -rv /share/* mnt/
-cmd=$1
-echo "running '$cmd'..."
-chroot mnt $cmd
+if [[ -n "${SETUP_SCRIPT}" ]]; then
+  if [[ -f "${SETUP_SCRIPT}" ]]; then
+    echo "running setup script..."
+    chroot mnt "${SETUP_SCRIPT}"
+  fi
+fi
 
 # now export the finalized image for flashing
-mkdir -p /build
-cp "${IMAGE_NAME}" /build/
+[ ! -d "/tmp/build" ] && mkdir "/tmp/build"
+cp "${IMAGE_NAME}" "/tmp/build/${IMAGE_NAME}"
 
 echo "---------------------------------------------"
 echo " ${IMAGE_NAME} is now ready for flashing"
