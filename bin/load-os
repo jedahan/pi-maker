@@ -8,7 +8,10 @@ echo "#############################################"
 echo "## Installing Operating System"
 echo "#############################################"
 
-[ ! -f "${IMAGE_PATH}" ] && { echo "downloading image..." && wget -P "/build/" "${OS_URI}" -q --show-progress }
+if [ ! -f "${IMAGE_PATH}" ]; then
+  echo "downloading image..."
+  wget -P "/build/" "${OS_URI}" -q --show-progress
+fi
 
 echo "unpacking image..."
 file "${IMAGE_PATH}" | grep -qE '((XZ|gzip) compressed data|POSIX tar archive)'
